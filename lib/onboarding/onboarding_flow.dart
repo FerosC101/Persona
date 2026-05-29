@@ -1,0 +1,136 @@
+import 'package:flutter/material.dart';
+
+import 'screens/account_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/personalize_screen.dart';
+import 'screens/wellness_profile_screen.dart';
+import 'widgets/shared_widgets.dart';
+
+class PersonaOnboardingFlow extends StatefulWidget {
+  const PersonaOnboardingFlow({super.key});
+
+  @override
+  State<PersonaOnboardingFlow> createState() => _PersonaOnboardingFlowState();
+}
+
+class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
+  final _pageController = PageController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _dobController = TextEditingController();
+
+  bool _obscurePassword = true;
+  int _pageIndex = 0;
+  String _selectedGender = 'Male';
+  String _selectedActivity = 'Lightly Active';
+  String _selectedSleep = 'Regular';
+  bool _wantsDock = false;
+  bool _wellnessNotifications = true;
+  bool _anonymousDataSharing = false;
+
+  final List<(String, String)> _activityLevels = const [
+    ('Sedentary', 'Little to no exercise'),
+    ('Lightly Active', '1–3 days/week'),
+    ('Moderately Active', '3–5 days/week'),
+    ('Very Active', '6–7 days/week'),
+    ('Athlete', 'Intense daily training'),
+  ];
+
+  final List<(String, String)> _sleepSchedules = const [
+    ('Early Bird', '9 PM - 5 AM'),
+    ('Regular', '10 PM - 6 AM'),
+    ('Night Owl', '12 AM - 8 AM'),
+    ('Flexible', 'Varies daily'),
+  ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _nameController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
+
+  void _goToPage(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF09101E), Color(0xFF05070C), Color(0xFF10192C)],
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              const GlowOrb(top: 48, left: -20, size: 180, color: Color(0x553B82F6)),
+              const GlowOrb(bottom: 60, right: -24, size: 200, color: Color(0x444754FF)),
+              PageView(
+                controller: _pageController,
+                onPageChanged: (index) => setState(() => _pageIndex = index),
+                children: [
+                  LoginScreen(
+                    obscurePassword: _obscurePassword,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
+                    onSignIn: () => _goToPage(1),
+                    onCreateAccount: () => _goToPage(1),
+                  ),
+                  AccountScreen(
+                    nameController: _nameController,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    dobController: _dobController,
+                    selectedGender: _selectedGender,
+                    onGenderChanged: (value) => setState(() => _selectedGender = value),
+                    onContinue: () => _goToPage(2),
+                    onBack: () => _goToPage(0),
+                  ),
+                  WellnessProfileScreen(
+                    activityLevels: _activityLevels,
+                    sleepSchedules: _sleepSchedules,
+                    selectedActivity: _selectedActivity,
+                    selectedSleep: _selectedSleep,
+                    onActivitySelected: (value) => setState(() => _selectedActivity = value),
+                    onSleepSelected: (value) => setState(() => _selectedSleep = value),
+                    onContinue: () => _goToPage(3),
+                    onBack: () => _goToPage(1),
+                  ),
+                  PersonalizeScreen(
+                    wantsDock: _wantsDock,
+                    wellnessNotifications: _wellnessNotifications,
+                    anonymousDataSharing: _anonymousDataSharing,
+                    onWantsDockChanged: (value) => setState(() => _wantsDock = value),
+                    onWellnessNotificationsChanged: (value) => setState(() => _wellnessNotifications = value),
+                    onAnonymousDataSharingChanged: (value) => setState(() => _anonymousDataSharing = value),
+                    onBack: () => _goToPage(2),
+                  ),
+                ],
+              ),
+              Positioned(
+                top: 14,
+                left: 20,
+                right: 20,
+                child: StepIndicator(step: _pageIndex + 1),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
