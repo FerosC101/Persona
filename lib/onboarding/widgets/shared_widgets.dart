@@ -155,7 +155,7 @@ class PersonaLogo extends StatelessWidget {
       ),
       child: ClipOval(
         child: Image.asset(
-          'web/icons/Icon-512.png',
+          'Persona Logo.png',
           fit: BoxFit.cover,
           filterQuality: FilterQuality.high,
         ),
