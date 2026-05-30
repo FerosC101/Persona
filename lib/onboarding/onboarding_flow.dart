@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/account_screen.dart';
+import 'screens/landing_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/personalize_screen.dart';
 import 'screens/wellness_profile_screen.dart';
@@ -68,27 +69,28 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF09101E), Color(0xFF05070C), Color(0xFF10192C)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF2B0F3C), Color(0xFF1C0A2B), Color(0xFF12061E)],
           ),
         ),
         child: SafeArea(
           child: Stack(
             children: [
-              const GlowOrb(top: 48, left: -20, size: 180, color: Color(0x553B82F6)),
-              const GlowOrb(bottom: 60, right: -24, size: 200, color: Color(0x444754FF)),
+              const GlowOrb(top: 40, left: -30, size: 200, color: Color(0x55A855F7)),
+              const GlowOrb(bottom: 40, right: -20, size: 220, color: Color(0x44D279FF)),
               PageView(
                 controller: _pageController,
                 onPageChanged: (index) => setState(() => _pageIndex = index),
                 children: [
+                  LandingScreen(onContinue: () => _goToPage(1)),
                   LoginScreen(
                     obscurePassword: _obscurePassword,
                     emailController: _emailController,
                     passwordController: _passwordController,
                     onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
-                    onSignIn: () => _goToPage(1),
-                    onCreateAccount: () => _goToPage(1),
+                    onSignIn: () => _goToPage(2),
+                    onCreateAccount: () => _goToPage(2),
                   ),
                   AccountScreen(
                     nameController: _nameController,
@@ -97,8 +99,8 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
                     dobController: _dobController,
                     selectedGender: _selectedGender,
                     onGenderChanged: (value) => setState(() => _selectedGender = value),
-                    onContinue: () => _goToPage(2),
-                    onBack: () => _goToPage(0),
+                    onContinue: () => _goToPage(3),
+                    onBack: () => _goToPage(1),
                   ),
                   WellnessProfileScreen(
                     activityLevels: _activityLevels,
@@ -107,8 +109,8 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
                     selectedSleep: _selectedSleep,
                     onActivitySelected: (value) => setState(() => _selectedActivity = value),
                     onSleepSelected: (value) => setState(() => _selectedSleep = value),
-                    onContinue: () => _goToPage(3),
-                    onBack: () => _goToPage(1),
+                    onContinue: () => _goToPage(4),
+                    onBack: () => _goToPage(2),
                   ),
                   PersonalizeScreen(
                     wantsDock: _wantsDock,
@@ -117,16 +119,17 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
                     onWantsDockChanged: (value) => setState(() => _wantsDock = value),
                     onWellnessNotificationsChanged: (value) => setState(() => _wellnessNotifications = value),
                     onAnonymousDataSharingChanged: (value) => setState(() => _anonymousDataSharing = value),
-                    onBack: () => _goToPage(2),
+                    onBack: () => _goToPage(3),
                   ),
                 ],
               ),
-              Positioned(
-                top: 14,
-                left: 20,
-                right: 20,
-                child: StepIndicator(step: _pageIndex + 1),
-              ),
+              if (_pageIndex > 0)
+                Positioned(
+                  top: 14,
+                  left: 20,
+                  right: 20,
+                  child: StepIndicator(step: _pageIndex, totalSteps: 4),
+                ),
             ],
           ),
         ),

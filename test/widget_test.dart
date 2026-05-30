@@ -13,7 +13,7 @@ void main() {
   testWidgets('Persona app builds the onboarding flow', (WidgetTester tester) async {
     await tester.pumpWidget(const PersonaApp());
 
-    expect(find.text('Welcome Back'), findsOneWidget);
-    expect(find.text('Sign In'), findsOneWidget);
+    expect(find.text('Welcome to Persona'), findsOneWidget);
+    expect(find.text('Continue'), findsOneWidget);
   });
 }

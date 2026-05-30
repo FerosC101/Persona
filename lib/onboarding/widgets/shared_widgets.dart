@@ -21,7 +21,7 @@ class ScreenScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(20, 72, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 64, 20, 28),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -38,9 +38,7 @@ class ScreenScaffold extends StatelessWidget {
               ),
             )
           else
-            const SizedBox(height: 20),
-          const SizedBox(height: 18),
-          const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [SizedBox.shrink(), BrandMark()]),
+            const SizedBox(height: 16),
           const SizedBox(height: 24),
           GlassCard(
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -150,10 +148,18 @@ class PersonaLogo extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(colors: [Color(0xFF8AB6FF), Color(0xFF8B5CF6), Color(0xFF53D7D8)]),
-        boxShadow: [BoxShadow(color: PersonaColors.cyan.withValues(alpha: 0.24), blurRadius: 28, spreadRadius: 1)],
+        boxShadow: [
+          BoxShadow(color: PersonaColors.purple.withValues(alpha: 0.35), blurRadius: 30, spreadRadius: 2),
+          BoxShadow(color: PersonaColors.cyan.withValues(alpha: 0.18), blurRadius: 16, spreadRadius: 1),
+        ],
       ),
-      child: const Center(child: Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 40)),
+      child: ClipOval(
+        child: Image.asset(
+          'web/icons/Icon-512.png',
+          fit: BoxFit.cover,
+          filterQuality: FilterQuality.high,
+        ),
+      ),
     );
   }
 }
@@ -179,21 +185,22 @@ class IconBubble extends StatelessWidget {
 }
 
 class StepIndicator extends StatelessWidget {
-  const StepIndicator({super.key, required this.step});
+  const StepIndicator({super.key, required this.step, this.totalSteps = 3});
 
   final int step;
+  final int totalSteps;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: List.generate(3, (index) {
+      children: List.generate(totalSteps, (index) {
         final active = index < step;
         return Expanded(
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 320),
             curve: Curves.easeOut,
             height: 4,
-            margin: EdgeInsets.only(right: index == 2 ? 0 : 10),
+            margin: EdgeInsets.only(right: index == totalSteps - 1 ? 0 : 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
               gradient: active ? const LinearGradient(colors: [PersonaColors.purple, PersonaColors.cyan]) : null,
