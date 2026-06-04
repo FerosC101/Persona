@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../full_page.dart';
+import '../services/mock_auth_service.dart';
 import 'screens/account_screen.dart';
 import 'screens/landing_screen.dart';
 import 'screens/login_screen.dart';
@@ -20,6 +22,7 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _dobController = TextEditingController();
+  late final MockAuthService _authService;
 
   bool _obscurePassword = true;
   int _pageIndex = 0;
@@ -46,6 +49,12 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _authService = MockAuthService();
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     _emailController.dispose();
@@ -61,6 +70,38 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
       duration: const Duration(milliseconds: 420),
       curve: Curves.easeOutCubic,
     );
+  }
+
+  /// Handle sign-in button press - attempt login with entered credentials
+  Future<void> _handleSignIn() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    // Attempt to login using mock auth service
+    final success = await _authService.login(
+      email: email,
+      password: password,
+    );
+
+    if (mounted) {
+      if (success) {
+        // Login successful - navigate to home page immediately
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } else {
+        // Login failed - show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _authService.errorMessage ?? 'Invalid credentials. Please try again.',
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -89,7 +130,7 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
                     emailController: _emailController,
                     passwordController: _passwordController,
                     onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
-                    onSignIn: () => _goToPage(2),
+                    onSignIn: _handleSignIn,
                     onCreateAccount: () => _goToPage(2),
                   ),
                   AccountScreen(
