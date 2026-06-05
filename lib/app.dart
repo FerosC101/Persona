@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'persona_colors.dart';
 import 'onboarding/onboarding_flow.dart';
+import 'main_tabs/tab_screens/ai_screen.dart';
+
 
 class PersonaApp extends StatelessWidget {
   const PersonaApp({super.key});
@@ -41,7 +43,7 @@ class PersonaApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const PersonaOnboardingFlow(),
+      home: const AiScreen(),
     );
   }
 }
