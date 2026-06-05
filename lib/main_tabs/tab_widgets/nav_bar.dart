@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
  
 import '../../design_system.dart';
 import '../../persona_colors.dart';
+import '../tab_screens/dock_screen.dart';
  
 /// Shared bottom navigation bar used by all main tabs.
 class CustomBottomNavBar extends StatelessWidget {
@@ -36,6 +37,15 @@ class CustomBottomNavBar extends StatelessWidget {
                       icon: d.icon,
                       label: d.label,
                       isSelected: d.isSelected,
+                      onTap: () {
+                        if (d.label == 'Dock') {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const DockScreen(),
+                            ),
+                          );
+                        }
+                      },
                     ))
                 .toList(growable: false),
           ),
@@ -62,42 +72,43 @@ class _BottomNavItem extends StatelessWidget {
     required this.icon,
     required this.label,
     this.isSelected = false,
+    required this.onTap,
   });
  
   final IconData icon;
   final String label;
   final bool isSelected;
+  final VoidCallback onTap;
  
   @override
   Widget build(BuildContext context) {
-    if (isSelected) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 55,
-            height: 55,
-            decoration: BoxDecoration(
-              color: PersonaColors.selectedNavBg,
-              borderRadius: BorderRadius.circular(18),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isSelected)
+              Container(
+                width: 55,
+                height: 55,
+                decoration: BoxDecoration(
+                  color: PersonaColors.selectedNavBg,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Icon(icon, color: PersonaColors.primaryPurple, size: 28),
+              )
+            else
+              Icon(icon, color: PersonaColors.textSecondary, size: 28),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: isSelected ? PersonaTextStyles.navLabelSelected : PersonaTextStyles.navLabel,
             ),
-            child: Icon(icon, color: PersonaColors.primaryPurple, size: 28),
-          ),
-          const SizedBox(height: 4),
-          Text(label, style: PersonaTextStyles.navLabelSelected),
-        ],
-      );
-    }
- 
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: PersonaColors.textSecondary, size: 28),
-          const SizedBox(height: 4),
-          Text(label, style: PersonaTextStyles.navLabel),
-        ],
+          ],
+        ),
       ),
     );
   }

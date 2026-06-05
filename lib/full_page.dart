@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'main_tabs/tab_screens/dock_screen.dart';
+
 // ─── Color Palette ────────────────────────────────────────────────────────────
 class _C {
   static const bg = Color(0xFFF4F2F8);
@@ -448,7 +450,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 return _TapScale(
                   scaleTo: 0.92,
                   child: GestureDetector(
-                    onTap: () => setState(() => _navIndex = i),
+                    onTap: () {
+                      setState(() => _navIndex = i);
+                      if (i == 3) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const DockScreen(),
+                          ),
+                        );
+                      }
+                    },
                     behavior: HitTestBehavior.opaque,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 220),

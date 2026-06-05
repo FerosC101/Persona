@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'persona_colors.dart';
-import 'onboarding/onboarding_flow.dart';
+import 'main_tabs/tab_screens/dock_screen.dart';
 
 class PersonaApp extends StatelessWidget {
   const PersonaApp({super.key});
@@ -13,14 +14,30 @@ class PersonaApp extends StatelessWidget {
       title: 'Persona',
       theme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: PersonaColors.background,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(
           seedColor: PersonaColors.cyan,
-          brightness: Brightness.dark,
+          brightness: Brightness.light,
           primary: PersonaColors.cyan,
           secondary: PersonaColors.purple,
-          surface: PersonaColors.surface,
+          surface: Colors.white,
+        ),
+        textTheme: GoogleFonts.interTextTheme().copyWith(
+          headlineLarge: GoogleFonts.inter(
+            fontSize: 34,
+            fontWeight: FontWeight.w700,
+            color: PersonaColors.textPrimary,
+          ),
+          headlineMedium: GoogleFonts.inter(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: PersonaColors.textPrimary,
+          ),
+          bodyLarge: GoogleFonts.inter(
+            fontSize: 16,
+            color: PersonaColors.textSecondary,
+          ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -41,7 +58,7 @@ class PersonaApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const PersonaOnboardingFlow(),
+      home: const DockScreen(),
     );
   }
 }

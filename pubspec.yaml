@@ -63,6 +63,7 @@ flutter:
   assets:
     - Persona Logo.png
     - web/icons/Icon-512.png
+    - assets/scents/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
