@@ -1025,6 +1025,7 @@ class _DockStatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const iconLabelColor = Color(0xFF99A1AF);
+    const labelPink = Color(0xFFCA70E0);
     const valueColor = Colors.white;
 
     return Column(
@@ -1039,7 +1040,7 @@ class _DockStatItem extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: iconLabelColor,
+                color: labelPink,
               ),
             ),
           ],
