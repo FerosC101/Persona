@@ -1,3 +1,4 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,6 +29,11 @@ Future<void> main() async {
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    // Initialize App Check for enhanced security
+    await FirebaseAppCheck.instance.activate(
+      providerWeb: ReCaptchaV3Provider('6Le3BQ4tAAAAAK8_fz9e_tlQ48HJUYRuOS9Z52np'),
     );
   } catch (e) {
     // Provide a clear guidance message for the common web config error
