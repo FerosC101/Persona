@@ -13,6 +13,7 @@ class PersonalizeScreen extends StatelessWidget {
     required this.onWellnessNotificationsChanged,
     required this.onAnonymousDataSharingChanged,
     required this.onBack,
+    required this.onComplete,
   });
 
   final bool wantsDock;
@@ -22,6 +23,7 @@ class PersonalizeScreen extends StatelessWidget {
   final ValueChanged<bool> onWellnessNotificationsChanged;
   final ValueChanged<bool> onAnonymousDataSharingChanged;
   final VoidCallback onBack;
+  final VoidCallback onComplete;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +74,7 @@ class PersonalizeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          GradientButton(label: 'Complete Registration', onPressed: () {}),
+          GradientButton(label: 'Complete Registration', onPressed: onComplete),
         ],
       ),
     );

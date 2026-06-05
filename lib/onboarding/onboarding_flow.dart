@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../full_page.dart';
-import '../services/mock_auth_service.dart';
+import '../services/firebase_auth_service.dart';
 import 'screens/account_screen.dart';
 import 'screens/landing_screen.dart';
 import 'screens/login_screen.dart';
@@ -22,7 +22,7 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _dobController = TextEditingController();
-  late final MockAuthService _authService;
+  late final FirebaseAuthService _authService;
 
   bool _obscurePassword = true;
   int _pageIndex = 0;
@@ -51,7 +51,7 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
   @override
   void initState() {
     super.initState();
-    _authService = MockAuthService();
+    _authService = FirebaseAuthService();
   }
 
   @override
@@ -77,31 +77,60 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    // Attempt to login using mock auth service
     final success = await _authService.login(
       email: email,
       password: password,
     );
 
-    if (mounted) {
-      if (success) {
-        // Login successful - navigate to home page immediately
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-      } else {
-        // Login failed - show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _authService.errorMessage ?? 'Invalid credentials. Please try again.',
-            ),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+      return;
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _authService.errorMessage ?? 'Invalid credentials. Please try again.',
+        ),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  Future<void> _handleCompleteRegistration() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    final success = await _authService.createAccount(
+      name: name,
+      email: email,
+      password: password,
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _authService.errorMessage ?? 'Could not complete registration.',
+        ),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -161,6 +190,7 @@ class _PersonaOnboardingFlowState extends State<PersonaOnboardingFlow> {
                     onWellnessNotificationsChanged: (value) => setState(() => _wellnessNotifications = value),
                     onAnonymousDataSharingChanged: (value) => setState(() => _anonymousDataSharing = value),
                     onBack: () => _goToPage(3),
+                    onComplete: _handleCompleteRegistration,
                   ),
                 ],
               ),
