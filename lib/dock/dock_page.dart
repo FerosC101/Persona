@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../main_tabs/tab_widgets/home_bottom_nav_bar.dart';
 import '../persona_colors.dart';
 
 class DockPage extends StatefulWidget {
@@ -14,7 +15,6 @@ class DockPage extends StatefulWidget {
 class _DockPageState extends State<DockPage> {
   double _brightness = 0.7;
   double _intensity = 0.6;
-  int _selectedNavIndex = 3;
   final Map<String, bool> _presetStates = <String, bool>{
     'Morning Routine': true,
     'Deep Work': true,
@@ -39,8 +39,8 @@ class _DockPageState extends State<DockPage> {
                 const SizedBox(height: 12),
                 Text(
                   'Persona Dock',
-                  style: GoogleFonts.inter(
-                    fontSize: 34,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 26,
                     fontWeight: FontWeight.w800,
                     height: 1.05,
                     color: PersonaColors.textPrimary,
@@ -91,14 +91,7 @@ class _DockPageState extends State<DockPage> {
           ),
         ),
       ),
-      bottomNavigationBar: DockBottomNavigationBar(
-        selectedIndex: _selectedNavIndex,
-        onItemSelected: (index) {
-          setState(() {
-            _selectedNavIndex = index;
-          });
-        },
-      ),
+      bottomNavigationBar: const HomeBottomNavBar(selectedIndex: 3),
     );
   }
 }
@@ -129,7 +122,7 @@ class AmbientLightingSection extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
-          childAspectRatio: 1.7,
+          childAspectRatio: 1.4,
           children: const [
             _LightingPresetCard(
               title: 'Calm Evening',
@@ -301,7 +294,7 @@ class _SectionHeader extends StatelessWidget {
         const SizedBox(width: 10),
         Text(
           title,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.dmSans(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: PersonaColors.textPrimary,
@@ -353,7 +346,9 @@ class _LightingPresetCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.dmSans(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: PersonaColors.textPrimary,
@@ -363,6 +358,8 @@ class _LightingPresetCard extends StatelessWidget {
           Text(
             subtitle,
             textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w400,
@@ -461,7 +458,7 @@ class _ScentCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.dmSans(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: PersonaColors.textPrimary,
@@ -673,7 +670,7 @@ class _AutomationPresetRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.dmSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: PersonaColors.textPrimary,
@@ -951,7 +948,7 @@ class _DockStatusCopy extends StatelessWidget {
           children: [
             Text(
               'Dock Status',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.dmSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.white.withValues(alpha: 0.88),
@@ -960,7 +957,7 @@ class _DockStatusCopy extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               'Active',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.dmSans(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: Colors.white.withValues(alpha: 0.98),

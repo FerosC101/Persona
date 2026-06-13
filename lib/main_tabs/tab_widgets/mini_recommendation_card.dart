@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
  
 import '../../design_system.dart';
 import '../../models/recommendation_item.dart';
@@ -30,7 +31,17 @@ class MiniRecommendationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(item.title, style: PersonaTextStyles.miniCardTitle),
+                Text(
+                  item.title,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: PersonaColors.textPrimary,
+                    height: 1.15,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 2),
                 Text(item.subtitle, style: PersonaTextStyles.miniCardSubtitle),
               ],

@@ -2,19 +2,25 @@ import 'package:flutter/material.dart';
  
 import '../../design_system.dart';
 import '../../persona_colors.dart';
-import '../tab_screens/dock_screen.dart';
  
 /// Shared bottom navigation bar used by all main tabs.
 class CustomBottomNavBar extends StatelessWidget {
-  const CustomBottomNavBar({super.key});
+  const CustomBottomNavBar({
+    super.key,
+    required this.selectedIndex,
+  });
+
+  final int selectedIndex;
  
   static const _items = <_NavItemData>[
     _NavItemData(icon: Icons.home_outlined,    label: 'Home'),
     _NavItemData(icon: Icons.favorite_border,  label: 'Mood'),
-    _NavItemData(icon: Icons.auto_awesome,     label: 'AI',     isSelected: true),
+    _NavItemData(icon: Icons.auto_awesome,     label: 'AI'),
     _NavItemData(icon: Icons.speed_outlined,   label: 'Dock'),
     _NavItemData(icon: Icons.palette_outlined, label: 'Scenes'),
   ];
+
+  static const _routes = <String>['/home', '/mood', '/ai', '/dock', '/scenes'];
  
   @override
   Widget build(BuildContext context) {
@@ -33,18 +39,18 @@ class CustomBottomNavBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: _items
-                .map((d) => _BottomNavItem(
-                      icon: d.icon,
-                      label: d.label,
-                      isSelected: d.isSelected,
+                .asMap()
+                .entries
+                .map((entry) => _BottomNavItem(
+                      icon: entry.value.icon,
+                      label: entry.value.label,
+                      isSelected: selectedIndex == entry.key,
                       onTap: () {
-                        if (d.label == 'Dock') {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const DockScreen(),
-                            ),
-                          );
+                        if (selectedIndex == entry.key) {
+                          return;
                         }
+
+                        Navigator.of(context).pushReplacementNamed(_routes[entry.key]);
                       },
                     ))
                 .toList(growable: false),
@@ -59,12 +65,10 @@ class _NavItemData {
   const _NavItemData({
     required this.icon,
     required this.label,
-    this.isSelected = false,
   });
  
   final IconData icon;
   final String label;
-  final bool isSelected;
 }
  
 class _BottomNavItem extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'main_tabs/tab_screens/dock_screen.dart';
+import 'main_tabs/tab_widgets/home_bottom_nav_bar.dart';
 
 // ─── Color Palette ────────────────────────────────────────────────────────────
 class _C {
@@ -28,11 +28,6 @@ class _C {
   static const focusBg = Color(0xFFFFF6E6);
   static const focusIcon = Color(0xFFF5A623);
   static const focusBar = Color(0xFFF5A623);
-  static const navBg = Color(0xFFFFFFFF);
-  static const navInactive = Color(0xFFB0A8C8);
-  static const navActiveBg = Color(0xFFE8E0FA);
-  static const navActiveIcon = Color(0xFF7C5CBF);
-  static const navLabel = Color(0xFF5B3B8C);
 }
 
 // ─── Entry Widget ─────────────────────────────────────────────────────────────
@@ -44,8 +39,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  int _navIndex = 0;
-
   // Entrance animation controllers (staggered)
   late final AnimationController _entranceCtrl;
   late final Animation<double> _headerFade;
@@ -415,88 +408,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   // ─── Bottom Navigation ────────────────────────────────────────────────────
   Widget _buildBottomNav() {
-    final items = [
-      _NavItem(icon: Icons.home_rounded, label: 'Home'),
-      _NavItem(icon: Icons.favorite_border_rounded, label: 'Mood'),
-      _NavItem(icon: Icons.auto_awesome_rounded, label: 'AI'),
-      _NavItem(icon: Icons.speed_rounded, label: 'Dock'),
-      _NavItem(icon: Icons.palette_outlined, label: 'Scenes'),
-    ];
-
-    return LayoutBuilder(builder: (context, constraints) {
-      final w = constraints.maxWidth;
-      return Container(
-        decoration: BoxDecoration(
-          color: _C.navBg,
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF9B7FD4).withValues(alpha: 0.10),
-              blurRadius: 24,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: w * 0.021,
-              vertical: w * 0.027,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(items.length, (i) {
-                final active = i == _navIndex;
-                return _TapScale(
-                  scaleTo: 0.92,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() => _navIndex = i);
-                      if (i == 3) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const DockScreen(),
-                          ),
-                        );
-                      }
-                    },
-                    behavior: HitTestBehavior.opaque,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 220),
-                      curve: Curves.easeOutCubic,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: w * 0.037,
-                        vertical: w * 0.021,
-                      ),
-                      decoration: BoxDecoration(
-                        color: active ? _C.navActiveBg : Colors.transparent,
-                        borderRadius: BorderRadius.circular(w * 0.043),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(items[i].icon,
-                              size: w * 0.064,
-                              color: active ? _C.navActiveIcon : _C.navInactive),
-                          SizedBox(height: w * 0.011),
-                          Text(items[i].label,
-                              style: GoogleFonts.dmSans(
-                                fontSize: w * 0.029,
-                                fontWeight:
-                                    active ? FontWeight.w700 : FontWeight.w500,
-                                color: active ? _C.navLabel : _C.navInactive,
-                              )),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      );
-    });
+    return const HomeBottomNavBar(selectedIndex: 0);
   }
 }
 
@@ -673,11 +585,4 @@ class _TapScaleState extends State<_TapScale>
       child: ScaleTransition(scale: _scale, child: widget.child),
     );
   }
-}
-
-// ─── Nav Item Model ───────────────────────────────────────────────────────────
-class _NavItem {
-  const _NavItem({required this.icon, required this.label});
-  final IconData icon;
-  final String label;
 }

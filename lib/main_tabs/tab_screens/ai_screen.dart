@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
  
 import '../../design_system.dart';
 import '../../models/recommendation_item.dart';
 import '../../persona_colors.dart';
-import '../tab_widgets/nav_bar.dart';
+import '../tab_widgets/home_bottom_nav_bar.dart';
 import '../tab_widgets/mini_recommendation_card.dart';
 import '../tab_widgets/recommendation_card.dart';
  
@@ -92,17 +93,7 @@ class AiScreen extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Wellness AI',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: PersonaColors.scaffold,
-        primaryColor: PersonaColors.primaryPurple,
-        fontFamily: 'Helvetica',
-      ),
-      home: const _AiRecommendationsScreen(),
-    );
+    return const _AiRecommendationsScreen();
   }
 }
  
@@ -111,7 +102,7 @@ class _AiRecommendationsScreen extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
@@ -120,20 +111,20 @@ class _AiRecommendationsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 30),
-              _AiHeader(),
-              SizedBox(height: 24),
-              _HighPrioritySection(),
-              SizedBox(height: 32),
-              _SuggestedSection(),
-              SizedBox(height: 30),
-              _WhenYouHaveTimeSection(),
-              SizedBox(height: 40),
+              const SizedBox(height: 30),
+              const _AiHeader(),
+              const SizedBox(height: 24),
+              const _HighPrioritySection(),
+              const SizedBox(height: 32),
+              const _SuggestedSection(),
+              const SizedBox(height: 30),
+              const _WhenYouHaveTimeSection(),
+              const SizedBox(height: 40),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(),
+      bottomNavigationBar: const HomeBottomNavBar(selectedIndex: 2),
     );
   }
 }
@@ -143,11 +134,18 @@ class _AiHeader extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('AI Recommendations', style: PersonaTextStyles.screenTitle),
-        SizedBox(height: 8),
+        Text(
+          'AI Recommendations',
+          style: GoogleFonts.dmSans(
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            color: PersonaColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
         Text(
           'Personalized wellness guidance for you',
           style: PersonaTextStyles.screenSubtitle,
@@ -168,7 +166,14 @@ class _HighPrioritySection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('High Priority', style: PersonaTextStyles.sectionTitleSmall),
+            Text(
+              'High Priority',
+              style: GoogleFonts.dmSans(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: PersonaColors.textPrimary,
+              ),
+            ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
@@ -210,7 +215,14 @@ class _SuggestedSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Suggested For You', style: PersonaTextStyles.sectionTitleLarge),
+        Text(
+          'Suggested For You',
+          style: GoogleFonts.dmSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: PersonaColors.textPrimary,
+          ),
+        ),
         const SizedBox(height: 20),
         ..._suggestedItems.map(
           (item) => Padding(
@@ -231,7 +243,14 @@ class _WhenYouHaveTimeSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('When You Have Time', style: PersonaTextStyles.sectionTitleMedium),
+        Text(
+          'When You Have Time',
+          style: GoogleFonts.dmSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: PersonaColors.textPrimary,
+          ),
+        ),
         const SizedBox(height: 20),
         ..._miniItems.map(
           (item) => Padding(

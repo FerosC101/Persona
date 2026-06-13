@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
  
 import '../../design_system.dart';
 import '../../models/recommendation_item.dart';
@@ -64,7 +65,15 @@ class _CardHeader extends StatelessWidget {
             children: [
               Text(item.category, style: PersonaTextStyles.cardCategory),
               const SizedBox(height: 4),
-              Text(item.title, style: PersonaTextStyles.cardTitle),
+              Text(
+                item.title,
+                style: GoogleFonts.dmSans(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: PersonaColors.textPrimary,
+                  height: 1.15,
+                ),
+              ),
             ],
           ),
         ),

@@ -1,8 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'persona_colors.dart';
+import 'full_page.dart';
+import 'main_tabs/tab_screens/ai_screen.dart';
 import 'main_tabs/tab_screens/dock_screen.dart';
+import 'main_tabs/tab_screens/mood_screen.dart';
+import 'persona_colors.dart';
+import 'main_tabs/tab_screens/scenes_screen.dart';
+
+class _NoAnimationPageTransitionsBuilder extends PageTransitionsBuilder {
+  const _NoAnimationPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return child;
+  }
+}
 
 class PersonaApp extends StatelessWidget {
   const PersonaApp({super.key});
@@ -16,6 +35,16 @@ class PersonaApp extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.light,
         scaffoldBackgroundColor: Colors.white,
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: _NoAnimationPageTransitionsBuilder(),
+            TargetPlatform.iOS: _NoAnimationPageTransitionsBuilder(),
+            TargetPlatform.macOS: _NoAnimationPageTransitionsBuilder(),
+            TargetPlatform.windows: _NoAnimationPageTransitionsBuilder(),
+            TargetPlatform.linux: _NoAnimationPageTransitionsBuilder(),
+            TargetPlatform.fuchsia: _NoAnimationPageTransitionsBuilder(),
+          },
+        ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: PersonaColors.cyan,
           brightness: Brightness.light,
@@ -58,7 +87,14 @@ class PersonaApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const DockScreen(),
+      initialRoute: '/scenes',
+      routes: {
+        '/home': (_) => const HomePage(),
+        '/mood': (_) => const MoodScreen(),
+        '/ai': (_) => const AiScreen(),
+        '/dock': (_) => const DockScreen(),
+        '/scenes': (_) => const AmbientScenesPage(),
+      },
     );
   }
 }
