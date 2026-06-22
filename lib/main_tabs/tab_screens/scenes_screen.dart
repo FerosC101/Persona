@@ -699,66 +699,228 @@ class _CreateCustomSceneCard extends StatelessWidget {
 
   final double radius;
 
+  void _openCreateModal(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (c) => const Padding(
+        padding: EdgeInsets.only(top: 48),
+        child: CreateCustomSceneModal(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F4FC),
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: const Color(0xFFE8E1F5)),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: const BoxDecoration(
-              color: PersonaColors.primaryPurple,
-              shape: BoxShape.circle,
+    return InkWell(
+      borderRadius: BorderRadius.circular(radius),
+      onTap: () => _openCreateModal(context),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF7F4FC),
+          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(color: const Color(0xFFE8E1F5)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: const BoxDecoration(
+                color: PersonaColors.primaryPurple,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.add, color: Colors.white, size: 30),
             ),
-            child: const Icon(Icons.add, color: Colors.white, size: 30),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Create Custom Scene',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.dmSans(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: PersonaColors.textPrimary,
+            const SizedBox(height: 12),
+            Text(
+              'Create Custom Scene',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.dmSans(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: PersonaColors.textPrimary,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Design your own ambient experience with custom lighting and scent combinations',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: PersonaColors.textSecondary,
-              height: 1.35,
+            const SizedBox(height: 8),
+            Text(
+              'Design your own ambient experience with custom lighting and scent combinations',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: PersonaColors.textSecondary,
+                height: 1.35,
+              ),
             ),
-          ),
-          const SizedBox(height: 14),
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFB790FF).withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: Text(
-                'Get Started',
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF6D45BE),
+            const SizedBox(height: 14),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFB790FF).withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                child: Text(
+                  'Get Started',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF6D45BE),
+                  ),
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CreateCustomSceneModal extends StatefulWidget {
+  const CreateCustomSceneModal({super.key});
+
+  @override
+  State<CreateCustomSceneModal> createState() => _CreateCustomSceneModalState();
+}
+
+class _CreateCustomSceneModalState extends State<CreateCustomSceneModal> {
+  final _nameController = TextEditingController();
+  final _subtitleController = TextEditingController();
+  String _lighting = 'Warm Purple';
+  String _scent = 'Lavender';
+  String _intensity = '50%';
+
+  void _save() {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Custom scene "${_nameController.text}" created')),
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _subtitleController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.78,
+      minChildSize: 0.4,
+      maxChildSize: 0.95,
+      builder: (context, controller) => Container(
+        decoration: BoxDecoration(
+          color: PersonaColors.scaffold,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+        child: SingleChildScrollView(
+          controller: controller,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'Create Custom Scene',
+                style: GoogleFonts.dmSans(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: PersonaColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Scene name',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _subtitleController,
+                decoration: InputDecoration(
+                  labelText: 'Short description',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: _lighting,
+                decoration: const InputDecoration(filled: true, fillColor: Colors.white, border: OutlineInputBorder()),
+                items: <String>['Warm Purple', 'Cool Cyan', 'Soft Amber', 'Natural White', 'Warm Orange']
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
+                onChanged: (v) => setState(() => _lighting = v ?? _lighting),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: _scent,
+                decoration: const InputDecoration(filled: true, fillColor: Colors.white, border: OutlineInputBorder()),
+                items: <String>['Lavender', 'Vanilla', 'Peppermint', 'Citrus', 'Chamomile']
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
+                onChanged: (v) => setState(() => _scent = v ?? _scent),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: _intensity,
+                decoration: const InputDecoration(filled: true, fillColor: Colors.white, border: OutlineInputBorder()),
+                items: <String>['30%', '50%', '60%', '70%', '80%']
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
+                onChanged: (v) => setState(() => _intensity = v ?? _intensity),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Cancel', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: PersonaColors.primaryPurple,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: _save,
+                      child: Text('Save', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

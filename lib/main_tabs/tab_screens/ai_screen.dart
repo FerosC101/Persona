@@ -192,15 +192,41 @@ class _HighPrioritySection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        ..._highPriorityItems.map(
-          (item) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: RecommendationCard(
-              item: item,
-              onTapAction: () {},
-              isPriority: true,
-            ),
-          ),
+        ..._highPriorityItems.asMap().entries.map(
+          (entry) {
+            final idx = entry.key;
+            final item = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: RecommendationCard(
+                item: item,
+                onTapAction: () {
+                  if (idx == 0) {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const Padding(
+                        padding: EdgeInsets.only(top: 48),
+                        child: SetBedtimeModal(),
+                      ),
+                    );
+                  } else if (idx == 1) {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const Padding(
+                        padding: EdgeInsets.only(top: 48),
+                        child: StartExerciseModal(),
+                      ),
+                    );
+                  }
+                },
+                isPriority: true,
+              ),
+            );
+          },
         ),
       ],
     );
@@ -224,11 +250,50 @@ class _SuggestedSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        ..._suggestedItems.map(
-          (item) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: RecommendationCard(item: item, onTapAction: () {}),
-          ),
+        ..._suggestedItems.asMap().entries.map(
+          (entry) {
+            final idx = entry.key;
+            final item = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: RecommendationCard(
+                item: item,
+                onTapAction: () {
+                  if (idx == 0) {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const Padding(
+                        padding: EdgeInsets.only(top: 48),
+                        child: ActivateFocusModal(),
+                      ),
+                    );
+                  } else if (idx == 1) {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const Padding(
+                        padding: EdgeInsets.only(top: 48),
+                        child: BeginRoutineModal(),
+                      ),
+                    );
+                  } else if (idx == 2) {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const Padding(
+                        padding: EdgeInsets.only(top: 48),
+                        child: StartSessionModal(),
+                      ),
+                    );
+                  }
+                },
+              ),
+            );
+          },
         ),
       ],
     );
@@ -255,10 +320,290 @@ class _WhenYouHaveTimeSection extends StatelessWidget {
         ..._miniItems.map(
           (item) => Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: MiniRecommendationCard(item: item, onTap: () {}),
+            child: MiniRecommendationCard(
+              item: item,
+              onTap: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => Padding(
+                    padding: const EdgeInsets.only(top: 48),
+                    child: TryItMiniModal(title: item.title),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Modals for AI actions
+// ---------------------------------------------------------------------------
+
+class SetBedtimeModal extends StatefulWidget {
+  const SetBedtimeModal({super.key});
+
+  @override
+  State<SetBedtimeModal> createState() => _SetBedtimeModalState();
+}
+
+class _SetBedtimeModalState extends State<SetBedtimeModal> {
+  TimeOfDay _time = TimeOfDay(hour: 22, minute: 0);
+
+  Future<void> _pickTime() async {
+    final t = await showTimePicker(context: context, initialTime: _time);
+    if (t != null) setState(() => _time = t);
+  }
+
+  void _save() {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Bedtime set to ${_time.format(context)}')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.4,
+      minChildSize: 0.3,
+      maxChildSize: 0.8,
+      builder: (context, controller) => Container(
+        decoration: BoxDecoration(
+          color: PersonaColors.scaffold,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black.withOpacity(0.06), borderRadius: BorderRadius.circular(4))),
+            ),
+            const SizedBox(height: 12),
+            Text('Set Bedtime', style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w800, color: PersonaColors.textPrimary)),
+            const SizedBox(height: 12),
+            Text('Choose your preferred bedtime to improve sleep timing.', style: PersonaTextStyles.cardBody),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _pickTime,
+                    style: OutlinedButton.styleFrom(backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                    child: Text(_time.format(context), style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Row(children: [Expanded(child: OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel'))), const SizedBox(width: 12), Expanded(child: ElevatedButton(onPressed: _save, child: const Text('Save')))]),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class StartExerciseModal extends StatefulWidget {
+  const StartExerciseModal({super.key});
+
+  @override
+  State<StartExerciseModal> createState() => _StartExerciseModalState();
+}
+
+class _StartExerciseModalState extends State<StartExerciseModal> {
+  String _type = 'Breathing';
+  int _minutes = 5;
+
+  void _start() {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Started $_minutes-minute $_type exercise')));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.5,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      builder: (context, controller) => Container(
+        decoration: BoxDecoration(color: PersonaColors.scaffold, borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+        padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          controller: controller,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black.withOpacity(0.06), borderRadius: BorderRadius.circular(4)))),
+            const SizedBox(height: 12),
+            Text('Start Exercise', style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w800, color: PersonaColors.textPrimary)),
+            const SizedBox(height: 12),
+            Text('Select a short mindful exercise to reduce stress.', style: PersonaTextStyles.cardBody),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(value: _type, decoration: const InputDecoration(filled: true, fillColor: Colors.white, border: OutlineInputBorder()), items: <String>['Breathing', 'Box Breathing', 'Body Scan'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(), onChanged: (v) => setState(() => _type = v ?? _type)),
+            const SizedBox(height: 12),
+            Text('Duration ($_minutes minutes)', style: PersonaTextStyles.cardCategory),
+            Slider(value: _minutes.toDouble(), min: 1, max: 20, divisions: 19, label: '$_minutes', onChanged: (v) => setState(() => _minutes = v.round())),
+            const SizedBox(height: 16),
+            Row(children: [Expanded(child: OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel'))), const SizedBox(width: 12), Expanded(child: ElevatedButton(onPressed: _start, child: const Text('Start')))]),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class ActivateFocusModal extends StatefulWidget {
+  const ActivateFocusModal({super.key});
+
+  @override
+  State<ActivateFocusModal> createState() => _ActivateFocusModalState();
+}
+
+class _ActivateFocusModalState extends State<ActivateFocusModal> {
+  int _minutes = 25;
+
+  void _activate() {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Focus mode activated for $_minutes minutes')));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.45,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      builder: (context, controller) => Container(
+        decoration: BoxDecoration(color: PersonaColors.scaffold, borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+        padding: const EdgeInsets.all(20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black.withOpacity(0.06), borderRadius: BorderRadius.circular(4)))),
+          const SizedBox(height: 12),
+          Text('Activate Focus', style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w800, color: PersonaColors.textPrimary)),
+          const SizedBox(height: 12),
+          Text('Start a distraction-free focus session with ambient changes.', style: PersonaTextStyles.cardBody),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<int>(value: _minutes, decoration: const InputDecoration(filled: true, fillColor: Colors.white, border: OutlineInputBorder()), items: <int>[15, 25, 45, 60].map((m) => DropdownMenuItem(value: m, child: Text('$m minutes'))).toList(), onChanged: (v) => setState(() => _minutes = v ?? _minutes)),
+          const SizedBox(height: 16),
+          Row(children: [Expanded(child: OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel'))), const SizedBox(width: 12), Expanded(child: ElevatedButton(onPressed: _activate, child: const Text('Activate')))]),
+        ]),
+      ),
+    );
+  }
+}
+
+class BeginRoutineModal extends StatefulWidget {
+  const BeginRoutineModal({super.key});
+
+  @override
+  State<BeginRoutineModal> createState() => _BeginRoutineModalState();
+}
+
+class _BeginRoutineModalState extends State<BeginRoutineModal> {
+  bool _lighting = true;
+  bool _scent = true;
+
+  void _start() {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Routine started')));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.45,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      builder: (context, controller) => Container(
+        decoration: BoxDecoration(color: PersonaColors.scaffold, borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+        padding: const EdgeInsets.all(20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black.withOpacity(0.06), borderRadius: BorderRadius.circular(4)))),
+          const SizedBox(height: 12),
+          Text('Begin Routine', style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w800, color: PersonaColors.textPrimary)),
+          const SizedBox(height: 12),
+          Text('Start your wind-down routine with these options.', style: PersonaTextStyles.cardBody),
+          const SizedBox(height: 12),
+          SwitchListTile(title: const Text('Lighting'), value: _lighting, onChanged: (v) => setState(() => _lighting = v)),
+          SwitchListTile(title: const Text('Scent'), value: _scent, onChanged: (v) => setState(() => _scent = v)),
+          const SizedBox(height: 12),
+          Row(children: [Expanded(child: OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel'))), const SizedBox(width: 12), Expanded(child: ElevatedButton(onPressed: _start, child: const Text('Start')))]),
+        ]),
+      ),
+    );
+  }
+}
+
+class StartSessionModal extends StatefulWidget {
+  const StartSessionModal({super.key});
+
+  @override
+  State<StartSessionModal> createState() => _StartSessionModalState();
+}
+
+class _StartSessionModalState extends State<StartSessionModal> {
+  int _minutes = 25;
+
+  void _start() {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Started session: $_minutes minutes')));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.45,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      builder: (context, controller) => Container(
+        decoration: BoxDecoration(color: PersonaColors.scaffold, borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+        padding: const EdgeInsets.all(20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black.withOpacity(0.06), borderRadius: BorderRadius.circular(4)))),
+          const SizedBox(height: 12),
+          Text('Start Session', style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w800, color: PersonaColors.textPrimary)),
+          const SizedBox(height: 12),
+          Text('Configure a focused work session.', style: PersonaTextStyles.cardBody),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<int>(value: _minutes, decoration: const InputDecoration(filled: true, fillColor: Colors.white, border: OutlineInputBorder()), items: <int>[15, 25, 30, 45].map((m) => DropdownMenuItem(value: m, child: Text('$m minutes'))).toList(), onChanged: (v) => setState(() => _minutes = v ?? _minutes)),
+          const SizedBox(height: 12),
+          Row(children: [Expanded(child: OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel'))), const SizedBox(width: 12), Expanded(child: ElevatedButton(onPressed: _start, child: const Text('Start')))]),
+        ]),
+      ),
+    );
+  }
+}
+
+class TryItMiniModal extends StatelessWidget {
+  const TryItMiniModal({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.38,
+      minChildSize: 0.28,
+      maxChildSize: 0.9,
+      builder: (context, controller) => Container(
+        decoration: BoxDecoration(color: PersonaColors.scaffold, borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+        padding: const EdgeInsets.all(20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black.withOpacity(0.06), borderRadius: BorderRadius.circular(4)))),
+          const SizedBox(height: 12),
+          Text(title, style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w800, color: PersonaColors.textPrimary)),
+          const SizedBox(height: 12),
+          Text('Quick action to try this recommendation now.', style: PersonaTextStyles.cardBody),
+          const SizedBox(height: 18),
+          Row(children: [Expanded(child: OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close'))), const SizedBox(width: 12), Expanded(child: ElevatedButton(onPressed: () { Navigator.of(context).pop(); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tried "$title"'))); }, child: const Text('Try It')))]),
+        ]),
+      ),
     );
   }
 }

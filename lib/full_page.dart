@@ -283,10 +283,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1),
                 ),
-                child: Material(
+                    child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => const Padding(
+                          padding: EdgeInsets.only(top: 48),
+                          child: UpdateMoodModal(),
+                        ),
+                      );
+                    },
                     borderRadius: BorderRadius.circular(999),
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
@@ -409,6 +419,111 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // ─── Bottom Navigation ────────────────────────────────────────────────────
   Widget _buildBottomNav() {
     return const HomeBottomNavBar(selectedIndex: 0);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Update Mood Modal
+// ---------------------------------------------------------------------------
+
+class UpdateMoodModal extends StatefulWidget {
+  const UpdateMoodModal({super.key});
+
+  @override
+  State<UpdateMoodModal> createState() => _UpdateMoodModalState();
+}
+
+class _UpdateMoodModalState extends State<UpdateMoodModal> {
+  String _mood = 'Calm & Focused';
+  double _intensity = 0.6;
+  final _notesController = TextEditingController();
+
+  final List<String> _choices = const [
+    'Calm & Focused',
+    'Energetic',
+    'Tired',
+    'Stressed',
+    'Content',
+  ];
+
+  void _save() {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Mood updated: $_mood')),
+    );
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.55,
+      minChildSize: 0.32,
+      maxChildSize: 0.95,
+      builder: (context, controller) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+        child: SingleChildScrollView(
+          controller: controller,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black.withOpacity(0.06), borderRadius: BorderRadius.circular(4)))),
+              const SizedBox(height: 12),
+              Text('Update Mood Check-in', style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w800, color: const Color(0xFF2E1B4E))),
+              const SizedBox(height: 12),
+              Text('How are you feeling right now?', style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF6B6B78))),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: _choices.map((c) {
+                  final selected = c == _mood;
+                  return ChoiceChip(
+                    label: Text(c, style: GoogleFonts.inter(color: selected ? Colors.white : const Color(0xFF2E1B4E))),
+                    selected: selected,
+                    selectedColor: const Color(0xFF5B3B8C),
+                    backgroundColor: const Color(0xFFF4F2F8),
+                    onSelected: (_) => setState(() => _mood = c),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 18),
+              Text('Intensity', style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF6B6B78), fontWeight: FontWeight.w600)),
+              Slider(value: _intensity, onChanged: (v) => setState(() => _intensity = v), min: 0, max: 1),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _notesController,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  hintText: 'Add a note (optional)',
+                  filled: true,
+                  fillColor: const Color(0xFFF7F6FA),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(child: OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel', style: GoogleFonts.inter(fontWeight: FontWeight.w600)))),
+                  const SizedBox(width: 12),
+                  Expanded(child: ElevatedButton(onPressed: _save, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5B3B8C)), child: Text('Save', style: GoogleFonts.inter(fontWeight: FontWeight.w700)))),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
