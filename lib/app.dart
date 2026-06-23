@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'core/global_session_overlay.dart';
+import 'core/session_manager.dart';
 import 'full_page.dart';
 import 'main_tabs/tab_screens/ai_screen.dart';
 import 'main_tabs/tab_screens/dock_screen.dart';
@@ -29,6 +31,7 @@ class PersonaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: globalNavigatorKey, 
       debugShowCheckedModeBanner: false,
       title: 'Persona',
       theme: ThemeData(
@@ -87,6 +90,15 @@ class PersonaApp extends StatelessWidget {
           ),
         ),
       ),
+
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!, 
+            const GlobalSessionOverlay(), 
+          ],
+        );
+      },
       initialRoute: '/scenes',
       routes: {
         '/home': (_) => const HomePage(),

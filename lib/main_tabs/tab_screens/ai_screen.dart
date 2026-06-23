@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
  
+import '../../workflows/deep_work/deep_work_setup.dart';
+import '../../workflows/breathing/breathing_setup.dart';
+import '../../workflows/sleep/sleep_setup.dart';
+import '../../workflows/wind_down/wind_down_setup.dart';
+import '../../workflows/pomodoro/pomodoro_setup.dart';
+import '../../workflows/hydration/hydration_coach.dart';
+import '../../workflows/energy_reset/energy_reset_setup.dart';
 import '../../design_system.dart';
 import '../../models/recommendation_item.dart';
 import '../../persona_colors.dart';
@@ -21,10 +28,10 @@ const _highPriorityItems = <RecommendationItem>[
     actionColor: PersonaColors.sleepPurple,
   ),
   RecommendationItem(
-    icon: Icons.psychology_outlined,
+    icon: Icons.air,
     iconColor: PersonaColors.stressPink,
     category: 'Stress Relief',
-    title: '5-Minute Breathing Exercise',
+    title: 'Breathing Exercise',
     description:
         'Your stress levels are slightly elevated. A quick breathing exercise can help '
         'calm your nervous system and improve focus.',
@@ -202,23 +209,25 @@ class _HighPrioritySection extends StatelessWidget {
                 item: item,
                 onTapAction: () {
                   if (idx == 0) {
+                    // SLEEP OPTIMIZATION (We will build this UI next!)
                     showModalBottomSheet<void>(
                       context: context,
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
                       builder: (_) => const Padding(
                         padding: EdgeInsets.only(top: 48),
-                        child: SetBedtimeModal(),
+                        child: SleepSetupSheet(), // Keep the old placeholder for now
                       ),
                     );
                   } else if (idx == 1) {
+                    // NEW BREATHING EXERCISE SHEET
                     showModalBottomSheet<void>(
                       context: context,
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
                       builder: (_) => const Padding(
                         padding: EdgeInsets.only(top: 48),
-                        child: StartExerciseModal(),
+                        child: BreathingSetupSheet(), 
                       ),
                     );
                   }
@@ -260,13 +269,14 @@ class _SuggestedSection extends StatelessWidget {
                 item: item,
                 onTapAction: () {
                   if (idx == 0) {
+                    // NEW DEEP WORK SHEET
                     showModalBottomSheet<void>(
                       context: context,
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
                       builder: (_) => const Padding(
                         padding: EdgeInsets.only(top: 48),
-                        child: ActivateFocusModal(),
+                        child: DeepWorkSetupSheet(), 
                       ),
                     );
                   } else if (idx == 1) {
@@ -276,7 +286,7 @@ class _SuggestedSection extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       builder: (_) => const Padding(
                         padding: EdgeInsets.only(top: 48),
-                        child: BeginRoutineModal(),
+                        child: WindDownSetupSheet(), // Keep old placeholder
                       ),
                     );
                   } else if (idx == 2) {
@@ -286,7 +296,7 @@ class _SuggestedSection extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       builder: (_) => const Padding(
                         padding: EdgeInsets.only(top: 48),
-                        child: StartSessionModal(),
+                        child: PomodoroSetupSheet(), // Keep old placeholder
                       ),
                     );
                   }
@@ -302,7 +312,7 @@ class _SuggestedSection extends StatelessWidget {
  
 class _WhenYouHaveTimeSection extends StatelessWidget {
   const _WhenYouHaveTimeSection();
- 
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -317,30 +327,58 @@ class _WhenYouHaveTimeSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        ..._miniItems.map(
-          (item) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: MiniRecommendationCard(
-              item: item,
-              onTap: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => Padding(
-                    padding: const EdgeInsets.only(top: 48),
-                    child: TryItMiniModal(title: item.title),
-                  ),
-                );
-              },
-            ),
-          ),
+        // We use .asMap().entries.map so we can get the 'idx' (index) of the card
+        ..._miniItems.asMap().entries.map(
+          (entry) {
+            final idx = entry.key;
+            final item = entry.value;
+            
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: MiniRecommendationCard(
+                item: item,
+                onTap: () {
+                  if (idx == 0) {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const Padding(
+                        padding: EdgeInsets.only(top: 48), 
+                        child: HydrationCoachSheet(),
+                      ),
+                    );
+                  } else if (idx == 1) {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const Padding(
+                        padding: EdgeInsets.only(top: 48), 
+                        child: EnergyResetSetupSheet(),
+                      ),
+                    );
+                  } else {
+                    // Fallback for any extra items you might add later
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => Padding(
+                        padding: const EdgeInsets.only(top: 48),
+                        child: TryItMiniModal(title: item.title),
+                      ),
+                    );
+                  }
+                },
+              ),
+            );
+          },
         ),
       ],
     );
   }
 }
-
 // ---------------------------------------------------------------------------
 // Modals for AI actions
 // ---------------------------------------------------------------------------
